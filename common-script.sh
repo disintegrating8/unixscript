@@ -6,7 +6,7 @@ base(){
     sudo pacman -S --needed --noconfirm base-devel archlinux-keyring findutils curl wget jq unzip python python-requests python-pyquery pacman-contrib
 
     # Packages for all de/wm
-    sudo pacman -S --needed --noconfrim kitty bc imagemagick inxi xdg-user-dirs xdg-utils brightnessctl yad 
+    sudo pacman -S --needed --noconfirm kitty bc imagemagick inxi xdg-user-dirs xdg-utils brightnessctl yad 
 }
 
 configure_backgrounds() {
@@ -76,7 +76,7 @@ install_ibus(){
 }
 
 install_fonts(){
-    sudo pacman -S --needed --noconfirm adobe-source-code-pro-fonts  otf-font-awesome  ttf-droid  ttf-fira-code ttf-fantasque-nerd ttf-jetbrains-mono  ttf-jetbrains-mono-nerd ttf-victor-mono ttf-meslo-nerd noto-fonts noto-fonts-emoji
+    yay -S --needed --noconfirm adobe-source-code-pro-fonts otf-font-awesome ttf-droid ttf-fira-code ttf-fantasque-nerd ttf-jetbrains-mono ttf-jetbrains-mono-nerd ttf-victor-mono ttf-meslo-nerd noto-fonts noto-fonts-emoji
 }
 
 configure_zsh(){
@@ -186,6 +186,6 @@ personal_packages(){
     yay -S --needed --noconfirm btop timeshift zip neovim bat
     echo "Installing apps..."
     yay -S --needed --noconfirm github-desktop-bin librewolf-bin libreoffice-fresh mpv obs-studio gimp steam prismlauncher gamescope gamemode
-    flatpak install com.discordapp.Discord com.github.iwalton3.jellyfin-media-player com.vysp3r.ProtonPlus
+    flatpak install -y com.discordapp.Discord com.github.iwalton3.jellyfin-media-player com.vysp3r.ProtonPlus
 
 }

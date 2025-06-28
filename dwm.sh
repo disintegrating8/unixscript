@@ -4,7 +4,7 @@
 . ./common-script.sh
 
 setupDWM(){
-    sudo pacman -S libx11 libxinerama libxft imlib2 unzip xclip rofi picom flameshot feh dunst mate-polkit
+    sudo pacman -S --needed --noconfirm libx11 libxinerama libxft imlib2 unzip xclip rofi picom flameshot feh dunst mate-polkit
     
     # install dwm
     cd "$HOME" && git clone https://github.com/disintegrating8/suckless.git
