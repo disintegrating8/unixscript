@@ -1,3 +1,5 @@
+#!/bin/bash
+
 base(){
     # Packages needed to run this script
     echo -e "\nInstalling ${SKY_BLUE}base-devel${RESET} and ${SKY_BLUE}archlinux-keyring${RESET}..."
@@ -40,45 +42,6 @@ configure_backgrounds() {
     fi
 }
 
-stow_dotfiles() {
-    DIRS="Kvantum qt5ct qt6ct zsh rofi nvim kitty fastfetch starship"
-    STOW_DIR="$HOME/dotfiles"
-
-    # Ensure stow is installed
-    command -v stow &>/dev/null || {
-      echo "Stow not found, installing..."
-      sudo pacman -S stow --noconfirm || { echo "Failed to install Stow."; exit 1; }
-    }
-
-    # Clone or update dotfiles
-    cd "$HOME" || exit 1
-    if [ -d dotfiles ]; then
-      cd dotfiles && git stash && git pull
-    else
-      git clone --depth=1 https://github.com/disintegrating8/dotfiles || {
-	echo "❌ Failed to clone dotfiles."; exit 1;
-      }
-      cd dotfiles || exit 1
-    fi
-
-    # Process and stow each directory
-    for DIR in $DIRS; do
-      echo -e "\n🔧 Processing $DIR..."
-      find "$STOW_DIR/$DIR" -type f | while read -r FILE; do
-	REL_PATH="${FILE#$STOW_DIR/$DIR/}"
-	DEST="$HOME/$REL_PATH"
-	if [ -e "$DEST" ] && [ ! -L "$DEST" ]; then
-	  BACKUP="$DEST.backup-$(date +"%m%d_%H%M")"
-	  echo "📦 Backing up $DEST → $BACKUP"
-	  mkdir -p "$(dirname "$BACKUP")"
-	  mv "$DEST" "$BACKUP"
-	fi
-      done
-      echo "📁 Stowing $DIR..."
-      stow "$DIR" && echo "✅ $DIR stowed!" || { echo "❌ Failed to stow $DIR."; exit 1; }
-    done
-}
-
 app_themes() {
     # installing engine needed for gtk themes
     sudo pacman -S --needed --noconfirm unzip gtk-engine-murrine kvantum qt5ct qt6ct qt6-svg lxappearance-gtk3
@@ -92,7 +55,7 @@ app_themes() {
     echo "$NOTE Cloning ${SKY_BLUE}GTK themes and Icons${RESET} repository..."
     if git clone --depth=1 https://github.com/disintegrating8/GTK-themes-icons.git ; then
         cd GTK-themes-icons
-        chmod +x auto-extract.sh
+    chmod +x auto-extract.sh
         ./auto-extract.sh
         cd ..
         echo "$OK Extracted GTK Themes & Icons to ~/.icons & ~/.themes directories"
@@ -110,6 +73,10 @@ pipewire() {
 
 install_ibus(){
     sudo pacman -S --needed --noconfirm ibus ibus-hangul noto-fonts-cjk
+}
+
+install_fonts(){
+    sudo pacman -S --needed --noconfirm adobe-source-code-pro-fonts  otf-font-awesome  ttf-droid  ttf-fira-code ttf-fantasque-nerd ttf-jetbrains-mono  ttf-jetbrains-mono-nerd ttf-victor-mono ttf-meslo-nerd noto-fonts noto-fonts-emoji
 }
 
 configure_zsh(){
@@ -140,8 +107,26 @@ configure_zsh(){
 }
 
 configure_thunar(){
+    printf "${INFO} Installing ${SKY_BLUE}Thunar${RESET} Packages...\n"  
+    sudo pacman -S --needed --noconfirm thunar thunar-volman tumbler ffmpegthumbnailer thunar-archive-plugin xarchiver gvfs gvfs-mtp
+     # Check for existing configs and copy if does not exist
+    for DIR1 in gtk-3.0 Thunar xfce4; do
+      DIRPATH=~/.config/$DIR1
+      if [ -d "$DIRPATH" ]; then
+        echo -e "${NOTE} Config for ${MAGENTA}$DIR1${RESET} found, no need to copy."
+      else
+        echo -e "${NOTE} Config for ${YELLOW}$DIR1${RESET} not found, copying from assets."
+        cp -r assets/$DIR1 ~/.config/ && echo "${OK} Copy $DIR1 completed!" || echo "${ERROR} Failed to copy $DIR1 config files."
+      fi
+    done
 
+    printf "${INFO} Setting ${SKY_BLUE}Thunar${RESET} as default file manager...\n"  
+     
+    xdg-mime default thunar.desktop inode/directory
+    xdg-mime default thunar.desktop application/x-wayland-gnome-saved-search
+    echo "${OK} ${MAGENTA}Thunar${RESET} is now set as the default file manager."
 }
+
 setupDisplayManager() {
     printf "%b\n" "${YELLOW}Setting up Xorg${RC}"
     sudo pacman -S --needed --noconfirm xorg-xinit xorg-server xorg-xrandr xorg-xinput xorg-xprop
@@ -194,4 +179,13 @@ setupDisplayManager() {
         printf "%b\n" "${GREEN}$DM installed successfully${RC}"
         enableService "$DM"
     fi
+}
+
+personal_packages(){
+    echo "Installing dev tools..."
+    yay -S --needed --noconfirm btop timeshift zip neovim bat
+    echo "Installing apps..."
+    yay -S --needed --noconfirm github-desktop-bin librewolf-bin libreoffice-fresh mpv obs-studio gimp steam prismlauncher gamescope gamemode
+    flatpak install com.discordapp.Discord com.github.iwalton3.jellyfin-media-player com.vysp3r.ProtonPlus
+
 }

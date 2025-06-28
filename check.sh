@@ -1,9 +1,18 @@
+#!/bin/bash
+
+RC='\033[0m'
+RED='\033[31m'
+YELLOW='\033[33m'
+CYAN='\033[36m'
+GREEN='\033[32m'
+
+
 command_exists() {
-for cmd in "$@"; do
-    export PATH="$HOME/.local/share/flatpak/exports/bin:/var/lib/flatpak/exports/bin:$PATH"
-    command -v "$cmd" >/dev/null 2>&1 || return 1
-done
-return 0
+    for cmd in "$@"; do
+	export PATH="$HOME/.local/share/flatpak/exports/bin:/var/lib/flatpak/exports/bin:$PATH"
+	command -v "$cmd" >/dev/null 2>&1 || return 1
+    done
+    return 0
 }
 
 checkFlatpak() {
@@ -21,6 +30,16 @@ checkFlatpak() {
             printf "%b\n" "${CYAN}Flatpak is installed${RC}"
         fi
     fi
+}
+
+checkArch() {
+    case "$(uname -m)" in
+        x86_64 | amd64) ARCH="x86_64" ;;
+        aarch64 | arm64) ARCH="aarch64" ;;
+        *) printf "%b\n" "${RED}Unsupported architecture: $(uname -m)${RC}" && exit 1 ;;
+    esac
+
+    printf "%b\n" "${CYAN}System architecture: ${ARCH}${RC}"
 }
 
 checkAURHelper() {
@@ -48,4 +67,47 @@ checkAURHelper() {
 	    exit 1
 	fi
     fi
+}
+
+checkCommandRequirements() {
+    REQUIREMENTS=$1
+    for req in ${REQUIREMENTS}; do
+	if ! command_exists "${req}"; then
+	    printf "%b\n" "${RED}To run me, you need: ${REQUIREMENTS}${RC}"
+	    exit 1
+	fi
+    done
+}
+
+checkSuperUser() {
+    SUPERUSERGROUP='wheel sudo root'
+    for sug in ${SUPERUSERGROUP}; do
+        if groups | grep -q "${sug}"; then
+            SUGROUP=${sug}
+            printf "%b\n" "${CYAN}Super user group ${SUGROUP}${RC}"
+            break
+        fi
+    done
+
+    ## Check if member of the sudo group.
+    if ! groups | grep -q "${SUGROUP}"; then
+        printf "%b\n" "${RED}You need to be a member of the sudo group to run me!${RC}"
+        exit 1
+    fi
+}
+
+checkCurrentDirectoryWritable() {
+    GITPATH="$(dirname "$(realpath "$0")")"
+    if [ ! -w "$GITPATH" ]; then
+        printf "%b\n" "${RED}Can't write to $GITPATH${RC}"
+        exit 1
+    fi
+}
+
+checkEnv() {
+    checkArch
+    checkCommandRequirements "curl groups sudo"
+    checkCurrentDirectoryWritable
+    checkSuperUser
+    checkAURHelper
 }
