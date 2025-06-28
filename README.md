@@ -1,7 +1,7 @@
-### unixscript
+# unixscript
  collection of scripts for linux and darwin for me
 
-### GNU/Linux
+# GNU/Linux
 ## Manually run the script
 - clone this repo then change directory, make executable and run the script
 
@@ -11,7 +11,7 @@ cd ~/unixscript
 chmod +x dwm.sh
 ./dwm.sh
 ```
-### Darwin
+# Darwin
 ## Manually run the script
 
 ```bash
