@@ -4,7 +4,7 @@
 . ./common-script.sh
 
 setupDWM(){
-    sudo pacman -S --needed --noconfirm libx11 libxinerama libxft imlib2 unzip xclip rofi picom flameshot feh dunst mate-polkit
+    yay -S --needed --noconfirm libx11 libxinerama libxft imlib2 unzip xclip rofi picom flameshot feh dunst mate-polkit
     
     # install dwm
     cd "$HOME" && git clone https://github.com/disintegrating8/suckless.git
@@ -32,7 +32,7 @@ stow_dotfiles() {
     # Ensure stow is installed
     command -v stow &>/dev/null || {
       echo "Stow not found, installing..."
-      sudo pacman -S stow --noconfirm || { echo "Failed to install Stow."; exit 1; }
+      yay -S stow --noconfirm || { echo "Failed to install Stow."; exit 1; }
     }
 
     # Clone or update dotfiles
@@ -77,3 +77,4 @@ setupDisplayManager
 install_ibus
 configure_thunar
 checkFlatpak
+personal_packages

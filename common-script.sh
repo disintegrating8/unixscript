@@ -3,10 +3,10 @@
 base(){
     # Packages needed to run this script
     echo -e "\nInstalling ${SKY_BLUE}base-devel${RESET} and ${SKY_BLUE}archlinux-keyring${RESET}..."
-    sudo pacman -S --needed --noconfirm base-devel archlinux-keyring findutils curl wget jq unzip python python-requests python-pyquery pacman-contrib
+    yay -S --needed --noconfirm base-devel archlinux-keyring findutils curl wget jq unzip python python-requests python-pyquery pacman-contrib
 
     # Packages for all de/wm
-    sudo pacman -S --needed --noconfirm kitty bc imagemagick inxi xdg-user-dirs xdg-utils brightnessctl yad 
+    yay -S --needed --noconfirm kitty bc imagemagick inxi xdg-user-dirs xdg-utils brightnessctl yad 
 }
 
 configure_backgrounds() {
@@ -44,7 +44,7 @@ configure_backgrounds() {
 
 app_themes() {
     # installing engine needed for gtk themes
-    sudo pacman -S --needed --noconfirm unzip gtk-engine-murrine kvantum qt5ct qt6ct qt6-svg lxappearance-gtk3
+    yay -S --needed --noconfirm unzip gtk-engine-murrine kvantum qt5ct qt6ct qt6-svg lxappearance-gtk3
 
     # Check if the directory exists and delete it if present
     if [ -d "GTK-themes-icons" ]; then
@@ -67,12 +67,12 @@ app_themes() {
 pipewire() {
     echo -e "${NOTE} Disabling pulseaudio to avoid conflicts..."
     systemctl --user disable --now pulseaudio.socket pulseaudio.service
-    sudo pacman -S --needed --noconfirm pipewire wireplumber pipewire-audio pipewire-alsa pipewire-pulse sof-firmware pamixer pavucontrol playerctl cava loupe mpv mpv-mpris yt-dlp libspng
+    yay -S --needed --noconfirm pipewire wireplumber pipewire-audio pipewire-alsa pipewire-pulse sof-firmware pamixer pavucontrol playerctl cava loupe mpv mpv-mpris yt-dlp libspng
     systemctl --user enable --now pipewire.service pipewire.socket pipewire-pulse.socket wireplumber.service
 }
 
 install_ibus(){
-    sudo pacman -S --needed --noconfirm ibus ibus-hangul noto-fonts-cjk
+    yay -S --needed --noconfirm ibus ibus-hangul noto-fonts-cjk
 }
 
 install_fonts(){
@@ -80,7 +80,7 @@ install_fonts(){
 }
 
 configure_zsh(){
-    sudo pacman -S --needed --noconfirm lsd zsh zsh-autosuggestions zsh-syntax-highlighting zsh-completions fzf starship fastfetch
+    yay -S --needed --noconfirm lsd zsh zsh-autosuggestions zsh-syntax-highlighting zsh-completions fzf starship fastfetch
     # Check if the zsh-completions directory exists
     if [ -d "zsh-completions" ]; then
 	rm -rf zsh-completions
@@ -108,7 +108,7 @@ configure_zsh(){
 
 configure_thunar(){
     printf "${INFO} Installing ${SKY_BLUE}Thunar${RESET} Packages...\n"  
-    sudo pacman -S --needed --noconfirm thunar thunar-volman tumbler ffmpegthumbnailer thunar-archive-plugin xarchiver gvfs gvfs-mtp
+    yay -S --needed --noconfirm thunar thunar-volman tumbler ffmpegthumbnailer thunar-archive-plugin xarchiver gvfs gvfs-mtp
      # Check for existing configs and copy if does not exist
     for DIR1 in gtk-3.0 Thunar xfce4; do
       DIRPATH=~/.config/$DIR1
