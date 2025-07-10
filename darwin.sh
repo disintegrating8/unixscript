@@ -7,43 +7,6 @@ CYAN='\033[36m'
 GREEN='\033[32m'
 
 DIRS=()
-stow_dotfiles() {
-    STOW_DIR="$HOME/dotfiles"
-    # Ensure stow is installed
-    command -v stow &>/dev/null || {
-      echo "Stow not found, installing..."
-      brew install stow || { echo "Failed to install Stow."; exit 1; }
-    }
-
-    # Clone or update dotfiles
-    cd "$HOME" || exit 1
-    if [ -d dotfiles ]; then
-      cd dotfiles && git stash && git pull
-    else
-      git clone --depth=1 https://github.com/disintegrating8/dotfiles || {
-	echo "❌ Failed to clone dotfiles."; exit 1;
-      }
-      cd dotfiles || exit 1
-    fi
-
-    # Process and stow each directory
-    for DIR in "${DIRS[@]}"; do
-      echo -e "\n🔧 Processing $DIR..."
-      find "$STOW_DIR/$DIR" -type f | while read -r FILE; do
-	REL_PATH="${FILE#$STOW_DIR/$DIR/}"
-	DEST="$HOME/$REL_PATH"
-	if [ -e "$DEST" ] && [ ! -L "$DEST" ]; then
-	  BACKUP="$DEST.backup-$(date +"%m%d_%H%M")"
-	  echo "📦 Backing up $DEST → $BACKUP"
-	  mkdir -p "$(dirname "$BACKUP")"
-	  mv "$DEST" "$BACKUP"
-	fi
-      done
-      echo "📁 Stowing $DIR..."
-      stow "$DIR" && echo "✅ $DIR stowed!" || { echo "❌ Failed to stow $DIR."; exit 1; }
-    done
-}
-
 # install homebrew
 if command -v brew >/dev/null 2>&1; then
     printf "%b\n" "${CYAN}Homebrew already installed${RC}"
@@ -53,8 +16,12 @@ else
 
     # Add Homebrew to Path
     if [[ $(uname -m) == "arm64" ]]; then
+	echo >> $HOME/.zprofile
+	echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> $HOME/.zprofile
 	eval "$(/opt/homebrew/bin/brew shellenv)"
     else
+	echo >> $HOME/.zprofile
+	echo 'eval "$(/usr/local/bin/brew shellenv)"' >> $HOME/.zprofile
 	eval "$(/usr/local/bin/brew shellenv)"
     fi
 
@@ -70,14 +37,13 @@ fi
 echo "Updating Homebrew..."
 brew update && brew upgrade
 
-## Taps
 brew install wget
 
 #ZSH
 read -n1 -rep "Install zsh plugins and dots? [y/n] " choice
 if [[ $choice =~ ^[Yy]$ ]]; then
     echo "You selected to"
-    DIRS+=("zsh.mac" "kitty" "starship")
+    DIRS+=("zsh.mac" "kitty" "starship" "fastfetch")
     brew install --cask kitty
     brew install fastfetch starship zsh-autosuggestions zsh-syntax-highlighting
 else
@@ -129,9 +95,40 @@ fi
 
 # Run dotfiles-setup
 echo "Installing dotfiles"
-stow_dotfiles
+STOW_DIR="$HOME/dotfiles"
+# Ensure stow is installed
+command -v stow &>/dev/null || {
+  echo "Stow not found, installing..."
+  brew install stow || { echo "Failed to install Stow."; exit 1; }
+}
 
-echo "${DIRS[@]}"
+# Clone or update dotfiles
+cd "$HOME" || exit 1
+if [ -d dotfiles ]; then
+  cd dotfiles && git stash && git pull
+else
+  git clone --depth=1 https://github.com/disintegrating8/dotfiles || {
+    echo "❌ Failed to clone dotfiles."; exit 1;
+  }
+  cd dotfiles || exit 1
+fi
+
+# Process and stow each directory
+for DIR in "${DIRS[@]}"; do
+  echo -e "\n🔧 Processing $DIR..."
+  find "$STOW_DIR/$DIR" -type f | while read -r FILE; do
+    REL_PATH="${FILE#$STOW_DIR/$DIR/}"
+    DEST="$HOME/$REL_PATH"
+    if [ -e "$DEST" ] && [ ! -L "$DEST" ]; then
+      BACKUP="$DEST.backup-$(date +"%m%d_%H%M")"
+      echo "📦 Backing up $DEST → $BACKUP"
+      mkdir -p "$(dirname "$BACKUP")"
+      mv "$DEST" "$BACKUP"
+    fi
+  done
+  echo "📁 Stowing $DIR..."
+  stow "$DIR" && echo "✅ $DIR stowed!" || { echo "❌ Failed to stow $DIR."; exit 1; }
+done
 
 if [[ $tchoice =~ ^[Yy]$ ]]; then
     yabai --start-service
