@@ -1,5 +1,11 @@
 #!/bin/bash
 
+RC='\033[0m'
+RED='\033[31m'
+YELLOW='\033[33m'
+CYAN='\033[36m'
+GREEN='\033[32m'
+
 DIRS=()
 stow_dotfiles() {
     STOW_DIR="$HOME/dotfiles"
@@ -39,16 +45,13 @@ stow_dotfiles() {
 }
 
 # install homebrew
-if [ -z "$HOMEBREW_CHECKED" ]; then
-    if command -v brew >/dev/null 2>&1; then
-	printf "%b\n" "${CYAN}Homebrew already installed${RC}"
-	HOMEBREW_CHECKED=true
-	return 0
-    fi
+if command -v brew >/dev/null 2>&1; then
+    printf "%b\n" "${CYAN}Homebrew already installed${RC}"
+else
     printf "%b\n" "${YELLOW}Installing Homebrew...${RC}"
     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
-    # Add Homebrew to PATH if needed (for ARM and Intel)
+    # Add Homebrew to Path
     if [[ $(uname -m) == "arm64" ]]; then
 	eval "$(/opt/homebrew/bin/brew shellenv)"
     else
@@ -56,7 +59,6 @@ if [ -z "$HOMEBREW_CHECKED" ]; then
     fi
 
     if command -v brew >/dev/null 2>&1; then
-	HOMEBREW_CHECKED=true
 	printf "%b\n" "${CYAN}Homebrew installed successfully${RC}"
     else
 	printf "%b\n" "${RED}Failed to install Homebrew.${RC}"
@@ -127,7 +129,7 @@ fi
 
 # Run dotfiles-setup
 echo "Installing dotfiles"
-. dotfiles-setup.sh
+stow_dotfiles
 
 if [[ $tchoice =~ ^[Yy]$ ]]; then
     yabai --start-service
