@@ -1,13 +1,12 @@
 #!/bin/bash
 
+DIRS=()
 stow_dotfiles() {
-    DIRS=()
     STOW_DIR="$HOME/dotfiles"
-
     # Ensure stow is installed
     command -v stow &>/dev/null || {
       echo "Stow not found, installing..."
-      sudo pacman -S stow --noconfirm || { echo "Failed to install Stow."; exit 1; }
+      brew install stow || { echo "Failed to install Stow."; exit 1; }
     }
 
     # Clone or update dotfiles
@@ -39,6 +38,31 @@ stow_dotfiles() {
     done
 }
 
+# install homebrew
+if [ -z "$HOMEBREW_CHECKED" ]; then
+    if command -v brew >/dev/null 2>&1; then
+	printf "%b\n" "${CYAN}Homebrew already installed${RC}"
+	HOMEBREW_CHECKED=true
+	return 0
+    fi
+    printf "%b\n" "${YELLOW}Installing Homebrew...${RC}"
+    NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+    # Add Homebrew to PATH if needed (for ARM and Intel)
+    if [[ $(uname -m) == "arm64" ]]; then
+	eval "$(/opt/homebrew/bin/brew shellenv)"
+    else
+	eval "$(/usr/local/bin/brew shellenv)"
+    fi
+
+    if command -v brew >/dev/null 2>&1; then
+	HOMEBREW_CHECKED=true
+	printf "%b\n" "${CYAN}Homebrew installed successfully${RC}"
+    else
+	printf "%b\n" "${RED}Failed to install Homebrew.${RC}"
+	exit 1
+    fi
+fi
 
 # Update & upgrade Homebrew
 echo "Updating Homebrew..."
@@ -52,17 +76,26 @@ brew tap koekeishiya/formulae
 brew install wget
 
 #ZSH
-read -n1 -rep "Do you want to config zsh? [y/n] " choice
+read -n1 -rep "Install zsh plugins and dots? [y/n] " choice
 if [[ $choice =~ ^[Yy]$ ]]; then
-    echo "Configuring zsh"
-    DIRS+=("zsh.mac kitty nvim starship")
+    echo "You selected to"
+    DIRS+=("zsh.mac" "kitty" "starship")
     brew install --cask kitty
-    brew install neovim ripgrep node fastfetch starship zsh-autosuggestions zsh-syntax-highlighting
+    brew install fastfetch starship zsh-autosuggestions zsh-syntax-highlighting
 else
     echo "skipping"
 fi
 
-# Tiling window manager setup for darwin
+read -n1 -rep "Install neovim and neovim dots? [y/n] " choice
+if [[ $choice =~ ^[Yy]$ ]]; then
+    echo "Configuring nvim"
+    DIRS+=("nvim")
+    brew install neovim ripgrep node
+else
+    echo "skipping"
+fi
+
+# Tiling window manager (more of a resizer) setup for darwin
 read -n1 -rep "Do you want to config tiling setup? [y/n] " tchoice
 if [[ $tchoice =~ ^[Yy]$ ]]; then
     echo "Configuring yabai, sketchybar, jankeyborders"
@@ -79,21 +112,18 @@ if [[ $tchoice =~ ^[Yy]$ ]]; then
     # Sketchybar Plugins
     curl -L https://github.com/kvndrsslr/sketchybar-app-font/releases/download/v2.0.28/sketchybar-app-font.ttf -o $HOME/Library/Fonts/sketchybar-app-font.ttf
     (git clone https://github.com/FelixKratz/SbarLua.git /tmp/SbarLua && cd /tmp/SbarLua/ && make install && rm -rf /tmp/SbarLua/)
-
 else
     echo "skipping"
 fi
 
-#personal apps
-read -n1 -rep "Do you want to config tiling setup? [y/n] " choice
+# personal apps
+read -n1 -rep "Install personal apps? (maybe not for you) [y/n] " choice
 if [[ $choice =~ ^[Yy]$ ]]; then
     brew install btop lazygit
     brew install --cask brave-browser karabiner-elements linearmouse pearcleaner libreoffice iina gimp jellyfin-media-player
 else
     echo "skipping"
 fi
-
-
 
 # Run dotfiles-setup
 echo "Installing dotfiles"

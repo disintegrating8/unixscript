@@ -187,5 +187,4 @@ personal_packages(){
     echo "Installing apps..."
     yay -S --needed --noconfirm github-desktop-bin librewolf-bin libreoffice-fresh mpv obs-studio gimp steam prismlauncher gamescope gamemode
     flatpak install -y com.discordapp.Discord com.github.iwalton3.jellyfin-media-player com.vysp3r.ProtonPlus
-
 }

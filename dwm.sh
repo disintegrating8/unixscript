@@ -32,7 +32,7 @@ stow_dotfiles() {
     # Ensure stow is installed
     command -v stow &>/dev/null || {
       echo "Stow not found, installing..."
-      yay -S stow --noconfirm || { echo "Failed to install Stow."; exit 1; }
+      yay -S --needed --noconfirm stow || { echo "Failed to install Stow."; exit 1; }
     }
 
     # Clone or update dotfiles
