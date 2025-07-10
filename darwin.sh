@@ -46,7 +46,7 @@ if [ -z "$HOMEBREW_CHECKED" ]; then
 	return 0
     fi
     printf "%b\n" "${YELLOW}Installing Homebrew...${RC}"
-    NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
     # Add Homebrew to PATH if needed (for ARM and Intel)
     if [[ $(uname -m) == "arm64" ]]; then
