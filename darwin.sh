@@ -27,7 +27,7 @@ stow_dotfiles() {
     fi
 
     # Process and stow each directory
-    for DIR in $DIRS; do
+    for DIR in "${DIRS[@]}"; do
       echo -e "\n🔧 Processing $DIR..."
       find "$STOW_DIR/$DIR" -type f | while read -r FILE; do
 	REL_PATH="${FILE#$STOW_DIR/$DIR/}"
@@ -71,10 +71,6 @@ echo "Updating Homebrew..."
 brew update && brew upgrade
 
 ## Taps
-echo "Tapping Brew..."
-brew tap FelixKratz/formulae
-brew tap koekeishiya/formulae
-
 brew install wget
 
 #ZSH
@@ -102,6 +98,10 @@ read -n1 -rep "Do you want to config tiling setup? [y/n] " tchoice
 if [[ $tchoice =~ ^[Yy]$ ]]; then
     echo "Configuring yabai, sketchybar, jankeyborders"
     DIRS+=("yabai" "skhd" "sketchybar" "borders")
+
+    echo "Tapping Brew..."
+    brew tap FelixKratz/formulae
+    brew tap koekeishiya/formulae
 
     echo "Installing dependencies for sketchybar config"
     brew install mas ifstat lua jq switchaudio-osx nowplaying-cli 
@@ -131,10 +131,13 @@ fi
 echo "Installing dotfiles"
 stow_dotfiles
 
+echo "${DIRS[@]}"
+
 if [[ $tchoice =~ ^[Yy]$ ]]; then
     yabai --start-service
     skhd --start-service
     brew services start sketchybar
     brew services start borders
+fi
 
 echo "Setup complete!"
