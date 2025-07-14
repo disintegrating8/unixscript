@@ -10,7 +10,6 @@ base(){
 }
 
 pacman_config(){
-    echo "Adding Extra Spice in pacman.conf ..."
     pacman_conf="/etc/pacman.conf"
 
     # Remove comments '#' from specific lines
@@ -25,25 +24,15 @@ pacman_config(){
     for line in "${lines_to_edit[@]}"; do
         if grep -q "^#$line" "$pacman_conf"; then
             sudo sed -i "s/^#$line/$line/" "$pacman_conf"
-            echo -e "Uncommented: $line"
-        else
-            echo -e "$line is already uncommented."
         fi
     done
 
     # Add "ILoveCandy" below ParallelDownloads if it doesn't exist
     if grep -q "^ParallelDownloads" "$pacman_conf" && ! grep -q "^ILoveCandy" "$pacman_conf"; then
         sudo sed -i "/^ParallelDownloads/a ILoveCandy" "$pacman_conf"
-        echo -e "Added ILoveCandy after ParallelDownloads"
-    else
-        echo -e "It seems ILoveCandy already exists"
     fi
 
-    echo -e "${CAT} ${MAGENTA}Pacman.conf${RESET} spicing up completed ${RESET}" 2>&1 | tee -a "$LOG"
-
-
     # updating pacman.conf
-    printf "\n%s - Synchronizing Pacman Repo\n"
     sudo pacman -Sy
 }
 
