@@ -9,33 +9,6 @@ base(){
     yay -S --needed --noconfirm kitty bc imagemagick inxi xdg-user-dirs xdg-utils brightnessctl yad 
 }
 
-pacman_config(){
-    pacman_conf="/etc/pacman.conf"
-
-    # Remove comments '#' from specific lines
-    lines_to_edit=(
-        "Color"
-        "CheckSpace"
-        "VerbosePkgLists"
-        "ParallelDownloads"
-    )
-
-    # Uncomment specified lines if they are commented out
-    for line in "${lines_to_edit[@]}"; do
-        if grep -q "^#$line" "$pacman_conf"; then
-            sudo sed -i "s/^#$line/$line/" "$pacman_conf"
-        fi
-    done
-
-    # Add "ILoveCandy" below ParallelDownloads if it doesn't exist
-    if grep -q "^ParallelDownloads" "$pacman_conf" && ! grep -q "^ILoveCandy" "$pacman_conf"; then
-        sudo sed -i "/^ParallelDownloads/a ILoveCandy" "$pacman_conf"
-    fi
-
-    # updating pacman.conf
-    sudo pacman -Sy
-}
-
 configure_backgrounds() {
     # Set the variable PIC_DIR which stores the path for images
     PIC_DIR="$HOME/Pictures"

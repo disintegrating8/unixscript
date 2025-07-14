@@ -66,7 +66,6 @@ stow_dotfiles() {
 
 checkEnv
 base
-pacman_config
 stow_dotfiles
 setupDWM
 pipewire
