@@ -26,7 +26,7 @@ setupDWM(){
 }
 
 stow_dotfiles() {
-    DIRS="Kvantum qt5ct qt6ct zsh rofi nvim kitty fastfetch starship"
+    DIRS="Kvantum qt5ct qt6ct zsh zprofile rofi nvim kitty fastfetch starship"
     STOW_DIR="$HOME/dotfiles"
 
     # Ensure stow is installed
@@ -66,6 +66,7 @@ stow_dotfiles() {
 
 checkEnv
 base
+pacman_config
 stow_dotfiles
 setupDWM
 pipewire
