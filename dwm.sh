@@ -4,6 +4,7 @@
 . ./common-script.sh
 
 setupDWM(){
+    printf "%b\n" "${YELLOW}Installing Dependencies for DWM...${RC}"
     yay -S --needed --noconfirm libx11 libxinerama libxft imlib2 unzip xclip rofi picom flameshot feh dunst mate-polkit
     
     # install dwm
@@ -12,14 +13,15 @@ setupDWM(){
     sudo make clean install
 
     # install sl_status
+    printf "%b\n" "${YELLOW}Installing slstatus${RC}"
     cd "$HOME/suckless/slstatus" || {
-      echo "Failed to change directory to slstatus"
+      printf "%b\n" "${RED}Failed to change directory to slstatus${RC}"
       exit 1
     }
     if sudo make clean install; then
-      echo "slstatus installed successfully"
+      printf "%b\n" "${GREEN}slstatus installed successfully${RC}"
     else
-      echo "Failed to install slstaus"
+      printf "%b\n" "${RED}Failed to install slstatus${RC}"
       exit 1
     fi
     cd "$HOME"
@@ -31,8 +33,8 @@ stow_dotfiles() {
 
     # Ensure stow is installed
     command -v stow &>/dev/null || {
-      echo "Stow not found, installing..."
-      yay -S --needed --noconfirm stow || { echo "Failed to install Stow."; exit 1; }
+      printf "%b\n" "${YELLOW}Stow not found, installing...${RC}"
+      yay -S --needed --noconfirm stow || { printf "%b\n" "${RED}Failed to install Stow${RC}"; exit 1; }
     }
 
     # Clone or update dotfiles
@@ -41,7 +43,7 @@ stow_dotfiles() {
       cd dotfiles && git stash && git pull
     else
       git clone --depth=1 https://github.com/disintegrating8/dotfiles || {
-	echo "❌ Failed to clone dotfiles."; exit 1;
+	printf "%b\n" "${RED}Failed to clone dotfiles${RC}"; exit 1;
       }
       cd dotfiles || exit 1
     fi
@@ -66,6 +68,7 @@ stow_dotfiles() {
 
 checkEnv
 base
+pacman_config
 stow_dotfiles
 setupDWM
 pipewire
@@ -76,5 +79,12 @@ configure_zsh
 setupDisplayManager
 install_ibus
 configure_thunar
-checkFlatpak
-personal_packages
+read -n1 -rep "Install flatpak? [y/n] " choice
+if [[ $choice =~ ^[Yy]$ ]]; then
+    printf "%b\n" "${YELLOW}Installing flatpak...${RC}"
+    checkFlatpak
+fi
+read -n1 -rep "Install personal packages? [y/n] " choice
+if [[ $choice =~ ^[Yy]$ ]]; then
+    personal_packages
+fi

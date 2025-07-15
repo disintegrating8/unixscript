@@ -1,12 +1,55 @@
 #!/bin/bash
 
-base(){
-    # Packages needed to run this script
-    echo -e "\nInstalling ${SKY_BLUE}base-devel${RESET} and ${SKY_BLUE}archlinux-keyring${RESET}..."
-    yay -S --needed --noconfirm base-devel archlinux-keyring findutils curl wget jq unzip python python-requests python-pyquery pacman-contrib
+RC='\033[0m' # Reset Color
+RED='\033[0;31m'
+YELLOW='\033[33m'
+CYAN='\033[36m'
+GREEN='\033[32m'
 
+base(){
+    printf "%b\n" "${YELLOW}Installing base-devel and archlinux-keyring...${RC}"
+    yay -S --needed --noconfirm base-devel archlinux-keyring 
+    printf "%b\n" "${YELLOW}Installing packages needed to run this script...${RC}"
+    yay -S --needed --noconfirm curl wget jq unzip findutils curl python python-requests python-pyquery pacman-contrib
     # Packages for all de/wm
     yay -S --needed --noconfirm kitty bc imagemagick inxi xdg-user-dirs xdg-utils brightnessctl yad 
+}
+
+pacman_config(){
+    printf "%b\n" "${YELLOW}Adding Extra Spice in pacman.conf...${RC}"
+    pacman_conf="/etc/pacman.conf"
+
+    # Remove comments '#' from specific lines
+    lines_to_edit=(
+        "Color"
+        "CheckSpace"
+        "VerbosePkgLists"
+        "ParallelDownloads"
+    )
+
+    # Uncomment specified lines if they are commented out
+    for line in "${lines_to_edit[@]}"; do
+        if grep -q "^#$line" "$pacman_conf"; then
+            sudo sed -i "s/^#$line/$line/" "$pacman_conf"
+            printf "%b\n" "${GREEN}Uncommented: $line${RC}"
+        else
+            printf "%b\n" "${GREEN}$line is already uncommented${RC}"
+        fi
+    done
+
+    # Add "ILoveCandy" below ParallelDownloads if it doesn't exist
+    if grep -q "^ParallelDownloads" "$pacman_conf" && ! grep -q "^ILoveCandy" "$pacman_conf"; then
+        sudo sed -i "/^ParallelDownloads/a ILoveCandy" "$pacman_conf"
+        printf "%b\n" "${GREEN}Added ${CYAN}ILoveCandy${RC} after ${CYAN}ParallelDownloads${RC}"
+    else
+        printf "%b\n" "${YELLOW}It seems ${CYAN}ILoveCandy${RC} already exists moving on...${RC}"
+    fi
+
+    printf "%b\n" "${GREEN}Pacman.conf spicing up completed${RC}"
+
+    # updating pacman.conf
+    printf "%b\n" "${CYAN}Synchronizing Pacman Repo${RC}"
+    sudo pacman -Sy
 }
 
 configure_backgrounds() {
@@ -44,34 +87,38 @@ configure_backgrounds() {
 
 app_themes() {
     # installing engine needed for gtk themes
-    yay -S --needed --noconfirm unzip gtk-engine-murrine kvantum qt5ct qt6ct qt6-svg lxappearance-gtk3
+    yay -S --needed --noconfirm gtk-engine-murrine kvantum qt5ct qt6ct qt6-svg lxappearance-gtk3
 
     # Check if the directory exists and delete it if present
     if [ -d "GTK-themes-icons" ]; then
-        echo "$NOTE GTK themes and Icons directory exist..deleting..."
+        printf "%b\n" "${YELLOW}GTK themes and Icons directory exist; deleting...${RC}"
         rm -rf "GTK-themes-icons"
     fi
 
-    echo "$NOTE Cloning ${SKY_BLUE}GTK themes and Icons${RESET} repository..."
+    printf "%b\n" "${YELLOW}Cloning GTK themes and Icons repository...${RC}"
     if git clone --depth=1 https://github.com/disintegrating8/GTK-themes-icons.git ; then
-        cd GTK-themes-icons
-    chmod +x auto-extract.sh
+        cd "$HOME/GTK-themes-icons"
+        chmod +x auto-extract.sh
         ./auto-extract.sh
-        cd ..
-        echo "$OK Extracted GTK Themes & Icons to ~/.icons & ~/.themes directories"
+        cd "$HOME"
+        printf "%b\n" "${GREEN}Extracted GTK Themes & Icons to ~/.icons & ~/.themes directories${RC}"
+        rm -rf "$HOME/GTK-themes-icons"
     else
-        echo "$ERROR Download failed for GTK themes and Icons.."
+        printf "%b\n" "${RED}Download failed for GTK themes and Icons...${RC}"
     fi
 }
 
 pipewire() {
-    echo -e "${NOTE} Disabling pulseaudio to avoid conflicts..."
+    printf "%b\n" "${YELLOW}Disabling pulseaudio to avoid conflicts...${RC}"
     systemctl --user disable --now pulseaudio.socket pulseaudio.service
+    printf "%b\n" "${YELLOW}Installing Pipewire Packages...${RC}"
     yay -S --needed --noconfirm pipewire wireplumber pipewire-audio pipewire-alsa pipewire-pulse sof-firmware pamixer pavucontrol playerctl cava loupe mpv mpv-mpris yt-dlp libspng
+    printf "%b\n" "${YELLOW}Activating Pipewire Services...${RC}"
     systemctl --user enable --now pipewire.service pipewire.socket pipewire-pulse.socket wireplumber.service
 }
 
 install_ibus(){
+    printf "%b\n" "${YELLOW}Installing ibus with ibus-hangul and noto-fonts-cjk${RC}"
     yay -S --needed --noconfirm ibus ibus-hangul noto-fonts-cjk
 }
 
@@ -80,7 +127,9 @@ install_fonts(){
 }
 
 configure_zsh(){
+    printf "%b\n" "${YELLOW}Installing zsh packages${RC}"
     yay -S --needed --noconfirm lsd zsh zsh-autosuggestions zsh-syntax-highlighting zsh-completions fzf starship fastfetch
+
     # Check if the zsh-completions directory exists
     if [ -d "zsh-completions" ]; then
 	rm -rf zsh-completions
@@ -91,40 +140,27 @@ configure_zsh(){
       # Check if the current shell is zsh
       current_shell=$(basename "$SHELL")
       if [ "$current_shell" != "zsh" ]; then
-	printf "${NOTE} Changing default shell to ${MAGENTA}zsh${RESET}..."
-
+        printf "%b\n" "${YELLOW}Changing default shell to zsh${RC}..."
 	# Loop to ensure the chsh command succeeds
 	while ! chsh -s "$(command -v zsh)"; do
-	  echo "${ERROR} Authentication failed. Please enter the correct password." 2>&1 | tee -a "$LOG"
+	  printf "%b\n" "${RED}Authentication failed. Please enter the correct password...${RC}"
 	  sleep 1
 	done
 
-	printf "${INFO} Shell changed successfully to ${MAGENTA}zsh${RESET}" 2>&1 | tee -a "$LOG"
+	printf "%b\n" "${GREEN}Shell changed successfully to zsh${RC}" 
       else
-	echo "${NOTE} Your shell is already set to ${MAGENTA}zsh${RESET}."
+	printf "%b\n" "${GREEN}Your shell is already set to zsh${RC}"
       fi
     fi
 }
 
 configure_thunar(){
-    printf "${INFO} Installing ${SKY_BLUE}Thunar${RESET} Packages...\n"  
+    printf "%b\n" "${YELLOW}Installing Thunar Packages...${RC}"  
     yay -S --needed --noconfirm thunar thunar-volman tumbler ffmpegthumbnailer thunar-archive-plugin xarchiver gvfs gvfs-mtp
-     # Check for existing configs and copy if does not exist
-    for DIR1 in gtk-3.0 Thunar xfce4; do
-      DIRPATH=~/.config/$DIR1
-      if [ -d "$DIRPATH" ]; then
-        echo -e "${NOTE} Config for ${MAGENTA}$DIR1${RESET} found, no need to copy."
-      else
-        echo -e "${NOTE} Config for ${YELLOW}$DIR1${RESET} not found, copying from assets."
-        cp -r assets/$DIR1 ~/.config/ && echo "${OK} Copy $DIR1 completed!" || echo "${ERROR} Failed to copy $DIR1 config files."
-      fi
-    done
-
-    printf "${INFO} Setting ${SKY_BLUE}Thunar${RESET} as default file manager...\n"  
-     
+    printf "%b\n" "${YELLOW}Setting Thunar as default file manager...${RC}"  
     xdg-mime default thunar.desktop inode/directory
     xdg-mime default thunar.desktop application/x-wayland-gnome-saved-search
-    echo "${OK} ${MAGENTA}Thunar${RESET} is now set as the default file manager."
+    printf "%b\n" "${GREEN}Thunar is now set as the default file manager${RC}"
 }
 
 setupDisplayManager() {
@@ -134,7 +170,7 @@ setupDisplayManager() {
     printf "%b\n" "${YELLOW}Setting up Display Manager${RC}"
     currentdm="none"
     for dm in gdm sddm lightdm; do
-        if command -v "$dm" >/dev/null 2>&1 || isServiceActive "$dm"; then
+        if command -v "$dm" >/dev/null 2>&1 || sudo systemctl is-active --quiet "$dm"; then
             currentdm="$dm"
             break
         fi
@@ -182,9 +218,9 @@ setupDisplayManager() {
 }
 
 personal_packages(){
-    echo "Installing dev tools..."
+    printf "%b\n" "${YELLOW}Installing dev tools...${RC}"
     yay -S --needed --noconfirm btop timeshift zip neovim bat
-    echo "Installing apps..."
-    yay -S --needed --noconfirm github-desktop-bin brave-bin libreoffice-fresh mpv obs-studio gimp steam prismlauncher gamescope gamemode
+    printf "%b\n" "${YELLOW}Installing apps...${RC}"
+    yay -S --needed --noconfirm github-desktop-bin brave-bin libreoffice-fresh signal-desktop mpv obs-studio gimp steam prismlauncher gamemode
     flatpak install -y com.discordapp.Discord com.github.iwalton3.jellyfin-media-player com.vysp3r.ProtonPlus
 }
