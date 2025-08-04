@@ -221,6 +221,7 @@ personal_packages(){
     printf "%b\n" "${YELLOW}Installing dev tools...${RC}"
     yay -S --needed --noconfirm btop timeshift zip neovim bat
     printf "%b\n" "${YELLOW}Installing apps...${RC}"
-    yay -S --needed --noconfirm github-desktop-bin brave-bin libreoffice-fresh signal-desktop mpv obs-studio gimp steam prismlauncher gamemode
+    yay -S --needed --noconfirm github-desktop-bin brave-bin libreoffice-fresh signal-desktop mpv obs-studio gimp prismlauncher gamemode
+    yay -S steam
     flatpak install -y com.discordapp.Discord com.github.iwalton3.jellyfin-media-player com.vysp3r.ProtonPlus
 }
