@@ -10,9 +10,9 @@ base(){
     printf "%b\n" "${YELLOW}Installing base-devel and archlinux-keyring...${RC}"
     yay -S --needed --noconfirm base-devel archlinux-keyring 
     printf "%b\n" "${YELLOW}Installing packages needed to run this script...${RC}"
-    yay -S --needed --noconfirm curl wget jq unzip findutils curl python python-requests python-pyquery pacman-contrib
+    yay -S --needed --noconfirm curl wget jq unzip zip findutils curl python python-requests python-pyquery pacman-contrib
     # Packages for all de/wm
-    yay -S --needed --noconfirm kitty bc imagemagick inxi xdg-user-dirs xdg-utils brightnessctl yad 
+    yay -S --needed --noconfirm mate-polkit xdg-user-dirs xdg-utils xclip picom rofi imagemagick brightnessctl flameshot feh dunst rofi kitty
 }
 
 pacman_config(){
@@ -112,7 +112,7 @@ pipewire() {
     printf "%b\n" "${YELLOW}Disabling pulseaudio to avoid conflicts...${RC}"
     systemctl --user disable --now pulseaudio.socket pulseaudio.service
     printf "%b\n" "${YELLOW}Installing Pipewire Packages...${RC}"
-    yay -S --needed --noconfirm pipewire wireplumber pipewire-audio pipewire-alsa pipewire-pulse sof-firmware pamixer pavucontrol playerctl cava loupe mpv mpv-mpris yt-dlp libspng
+    yay -S --needed --noconfirm pipewire wireplumber pipewire-audio pipewire-alsa pipewire-pulse sof-firmware pamixer pavucontrol loupe mpv mpv-mpris yt-dlp libspng
     printf "%b\n" "${YELLOW}Activating Pipewire Services...${RC}"
     systemctl --user enable --now pipewire.service pipewire.socket pipewire-pulse.socket wireplumber.service
 }
@@ -161,6 +161,16 @@ configure_thunar(){
     xdg-mime default thunar.desktop inode/directory
     xdg-mime default thunar.desktop application/x-wayland-gnome-saved-search
     printf "%b\n" "${GREEN}Thunar is now set as the default file manager${RC}"
+}
+
+configure_nemo(){
+    printf "%b\n" "${YELLOW}Installing Nemo Packages...${RC}"  
+    yay -S --needed --noconfirm nemo nemo-terminal nemo-seahorse nemo-share nemo-fileroller nemo-pastebin nemo-compare nemo-preview nemo-image-converter nemo-audio-tab gvfs gvfs-mtp gvfs-smb gvfs-nfs
+    printf "%b\n" "${YELLOW}Setting Nemo as default file manager...${RC}"
+    xdg-mime default nemo.desktop inode/directory application/x-gnome-saved-search
+    gsettings set org.nemo.desktop show-desktop-icons true
+    gsettings set org.cinnamon.desktop.default-applications.terminal exec kitty
+    printf "%b\n" "${GREEN}Nemo is now set as the default file manager${RC}"
 }
 
 setupDisplayManager() {
@@ -218,10 +228,8 @@ setupDisplayManager() {
 }
 
 personal_packages(){
-    printf "%b\n" "${YELLOW}Installing dev tools...${RC}"
-    yay -S --needed --noconfirm btop timeshift zip neovim bat
-    printf "%b\n" "${YELLOW}Installing apps...${RC}"
-    yay -S --needed --noconfirm github-desktop-bin brave-bin libreoffice-fresh signal-desktop mpv obs-studio gimp prismlauncher gamemode
+    printf "%b\n" "${YELLOW}Installing personal packages...${RC}"
+    yay -S --needed --noconfirm btop timeshift neovim github-desktop-bin brave-bin libreoffice-fresh signal-desktop mpv obs-studio gimp prismlauncher gamemode
     yay -S steam
     flatpak install -y com.discordapp.Discord com.github.iwalton3.jellyfin-media-player com.vysp3r.ProtonPlus
 }

@@ -5,7 +5,7 @@
 
 setupDWM(){
     printf "%b\n" "${YELLOW}Installing Dependencies for DWM...${RC}"
-    yay -S --needed --noconfirm libx11 libxinerama libxft imlib2 unzip xclip rofi picom flameshot feh dunst mate-polkit
+    yay -S --needed --noconfirm libx11 libxft libxinerama imlib2 
     
     # install dwm
     cd "$HOME" && git clone https://github.com/disintegrating8/suckless.git
@@ -78,7 +78,7 @@ configure_backgrounds
 configure_zsh
 setupDisplayManager
 install_ibus
-configure_thunar
+configure_nemo
 read -n1 -rep "Install flatpak? [y/n] " choice
 if [[ $choice =~ ^[Yy]$ ]]; then
     printf "%b\n" "${YELLOW}Installing flatpak...${RC}"
