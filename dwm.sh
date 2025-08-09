@@ -28,7 +28,7 @@ setupDWM(){
 }
 
 stow_dotfiles() {
-    DIRS="Kvantum qt5ct qt6ct zsh zprofile rofi nvim kitty fastfetch starship"
+    DIRS="qt zsh zprofile rofi nvim kitty fastfetch starship"
     STOW_DIR="$HOME/dotfiles"
 
     # Ensure stow is installed
