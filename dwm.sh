@@ -50,19 +50,19 @@ stow_dotfiles() {
 
     # Process and stow each directory
     for DIR in $DIRS; do
-      echo -e "\n🔧 Processing $DIR..."
+      printf "%b\n" "${YELLOW}Processing $DIR...${RC}"
       find "$STOW_DIR/$DIR" -type f | while read -r FILE; do
 	REL_PATH="${FILE#$STOW_DIR/$DIR/}"
 	DEST="$HOME/$REL_PATH"
 	if [ -e "$DEST" ] && [ ! -L "$DEST" ]; then
 	  BACKUP="$DEST.backup-$(date +"%m%d_%H%M")"
-	  echo "📦 Backing up $DEST → $BACKUP"
+	  printf "%b\n" "${YELLOW}Backing up $DEST → $BACKUP${RC}"
 	  mkdir -p "$(dirname "$BACKUP")"
 	  mv "$DEST" "$BACKUP"
 	fi
       done
-      echo "📁 Stowing $DIR..."
-      stow "$DIR" && echo "✅ $DIR stowed!" || { echo "❌ Failed to stow $DIR."; exit 1; }
+      printf "%b\n" "${YELLOW}Stowing $DIR...${RC}"
+      stow "$DIR" && printf "%b\n" "${GREEN}$DIR stowed!${RC}" || { printf "%b\n" "${RED}Failed to stow $DIR.${RC}"; exit 1; }
     done
 }
 
@@ -76,14 +76,8 @@ install_fonts
 app_themes
 configure_backgrounds
 configure_zsh
-setupDisplayManager
 install_ibus
 configure_nemo
-read -n1 -rep "Install flatpak? [y/n] " choice
-if [[ $choice =~ ^[Yy]$ ]]; then
-    printf "%b\n" "${YELLOW}Installing flatpak...${RC}"
-    checkFlatpak
-fi
 read -n1 -rep "Install personal packages? [y/n] " choice
 if [[ $choice =~ ^[Yy]$ ]]; then
     personal_packages

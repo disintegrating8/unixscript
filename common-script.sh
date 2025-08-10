@@ -11,8 +11,11 @@ base(){
     yay -S --needed --noconfirm base-devel archlinux-keyring 
     printf "%b\n" "${YELLOW}Installing packages needed to run this script...${RC}"
     yay -S --needed --noconfirm curl wget jq unzip zip findutils curl python python-requests python-pyquery pacman-contrib
+    printf "%b\n" "${YELLOW}Setting up Xorg${RC}"
+    sudo pacman -S --needed --noconfirm xorg-xinit xorg-server xorg-xrandr xorg-xinput xorg-xprop
+    printf "%b\n" "${GREEN}Xorg installed successfully${RC}"
     # Packages for all de/wm
-    yay -S --needed --noconfirm mate-polkit xdg-user-dirs xdg-utils xclip picom rofi imagemagick brightnessctl flameshot feh dunst rofi kitty
+    yay -S --needed --noconfirm mate-polkit xdg-user-dirs xdg-utils xclip picom rofi imagemagick brightnessctl flameshot feh dunst rofi kitty man-db man-pages
 }
 
 pacman_config(){
@@ -128,7 +131,7 @@ install_fonts(){
 
 configure_zsh(){
     printf "%b\n" "${YELLOW}Installing zsh packages${RC}"
-    yay -S --needed --noconfirm lsd zsh zsh-autosuggestions zsh-syntax-highlighting zsh-completions fzf starship fastfetch
+    yay -S --needed --noconfirm lsd zsh zsh-autosuggestions zsh-syntax-highlighting fzf starship fastfetch trash-cli
 
     # Check if the zsh-completions directory exists
     if [ -d "zsh-completions" ]; then
@@ -154,16 +157,9 @@ configure_zsh(){
     fi
 }
 
-configure_thunar(){
-    printf "%b\n" "${YELLOW}Installing Thunar Packages...${RC}"  
-    yay -S --needed --noconfirm thunar thunar-volman tumbler ffmpegthumbnailer thunar-archive-plugin xarchiver gvfs gvfs-mtp
-    printf "%b\n" "${YELLOW}Setting Thunar as default file manager...${RC}"  
-    xdg-mime default thunar.desktop inode/directory
-    xdg-mime default thunar.desktop application/x-wayland-gnome-saved-search
-    printf "%b\n" "${GREEN}Thunar is now set as the default file manager${RC}"
-}
-
 configure_nemo(){
+    # file system related stuff
+    yay -S --needed --noconfirm ntfs-3g
     printf "%b\n" "${YELLOW}Installing Nemo Packages...${RC}"  
     yay -S --needed --noconfirm nemo nemo-seahorse nemo-share nemo-fileroller nemo-pastebin nemo-compare nemo-preview nemo-image-converter nemo-audio-tab gvfs gvfs-mtp gvfs-smb gvfs-nfs
     printf "%b\n" "${YELLOW}Setting Nemo as default file manager...${RC}"
@@ -171,60 +167,6 @@ configure_nemo(){
     gsettings set org.nemo.desktop show-desktop-icons true
     gsettings set org.cinnamon.desktop.default-applications.terminal exec kitty
     printf "%b\n" "${GREEN}Nemo is now set as the default file manager${RC}"
-}
-
-setupDisplayManager() {
-    printf "%b\n" "${YELLOW}Setting up Xorg${RC}"
-    sudo pacman -S --needed --noconfirm xorg-xinit xorg-server xorg-xrandr xorg-xinput xorg-xprop
-    printf "%b\n" "${GREEN}Xorg installed successfully${RC}"
-    printf "%b\n" "${YELLOW}Setting up Display Manager${RC}"
-    currentdm="none"
-    for dm in gdm sddm lightdm; do
-        if command -v "$dm" >/dev/null 2>&1 || sudo systemctl is-active --quiet "$dm"; then
-            currentdm="$dm"
-            break
-        fi
-    done
-    printf "%b\n" "${GREEN}Current display manager: $currentdm${RC}"
-    if [ "$currentdm" = "none" ]; then
-        printf "%b\n" "${YELLOW}--------------------------${RC}" 
-        printf "%b\n" "${YELLOW}Pick your Display Manager ${RC}" 
-        printf "%b\n" "${YELLOW}1. SDDM ${RC}" 
-        printf "%b\n" "${YELLOW}2. LightDM ${RC}" 
-        printf "%b\n" "${YELLOW}3. GDM ${RC}"
-        printf "%b\n" "${YELLOW}4. Ly ${RC}" 
-        printf "%b\n" "${YELLOW}5. None ${RC}" 
-        printf "%b" "${YELLOW}Please select one: ${RC}"
-        read -r choice
-        case "$choice" in
-            1)
-                DM="sddm"
-                ;;
-            2)
-                DM="lightdm"
-                ;;
-            3)
-                DM="gdm"
-                ;;
-            4)
-                DM="ly"
-                ;;
-            5)
-                printf "%b\n" "${GREEN}No display manager will be installed${RC}"
-                return 0
-                ;;
-            *)
-                printf "%b\n" "${RED}Invalid selection! Please choose 1, 2, 3, or 4.${RC}"
-                return 1
-                ;;
-        esac
-        sudo pacman -S --needed --noconfirm "$DM"
-	if [ "$DM" = "lightdm" ]; then
-	    sudo pacman -S --needed --noconfirm lightdm-gtk-greeter
-	fi
-        printf "%b\n" "${GREEN}$DM installed successfully${RC}"
-        enableService "$DM"
-    fi
 }
 
 personal_packages(){

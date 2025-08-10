@@ -110,4 +110,5 @@ checkEnv() {
     checkCurrentDirectoryWritable
     checkSuperUser
     checkAURHelper
+    checkFlatpak
 }
