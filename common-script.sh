@@ -165,7 +165,7 @@ configure_thunar(){
 
 configure_nemo(){
     printf "%b\n" "${YELLOW}Installing Nemo Packages...${RC}"  
-    yay -S --needed --noconfirm nemo nemo-terminal nemo-seahorse nemo-share nemo-fileroller nemo-pastebin nemo-compare nemo-preview nemo-image-converter nemo-audio-tab gvfs gvfs-mtp gvfs-smb gvfs-nfs
+    yay -S --needed --noconfirm nemo nemo-seahorse nemo-share nemo-fileroller nemo-pastebin nemo-compare nemo-preview nemo-image-converter nemo-audio-tab gvfs gvfs-mtp gvfs-smb gvfs-nfs
     printf "%b\n" "${YELLOW}Setting Nemo as default file manager...${RC}"
     xdg-mime default nemo.desktop inode/directory application/x-gnome-saved-search
     gsettings set org.nemo.desktop show-desktop-icons true
