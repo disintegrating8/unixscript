@@ -15,7 +15,7 @@ base(){
     sudo pacman -S --needed --noconfirm xorg-xinit xorg-server xorg-xrandr xorg-xinput xorg-xprop
     printf "%b\n" "${GREEN}Xorg installed successfully${RC}"
     # Packages for all de/wm
-    yay -S --needed --noconfirm mate-polkit xdg-user-dirs xdg-utils xclip picom rofi imagemagick brightnessctl flameshot feh dunst rofi kitty man-db man-pages
+    yay -S --needed --noconfirm mate-polkit xdg-user-dirs xdg-utils xdg-desktop-portal xdg-desktop-portal-gtk xclip picom rofi imagemagick brightnessctl flameshot feh dunst rofi kitty man-db man-pages
 }
 
 pacman_config(){
