@@ -122,17 +122,17 @@ main() {
     printf "%b" "Enter your choice [1-6]: "
     read -r CHOICE
     case "$CHOICE" in
-		1) install_homebrew ;;
+	1) install_homebrew ;;
         2) install_zsh ;;
         3) install_nvim ;;
         4) install_yabai ;;
-		5) install_my_apps ;;
+	5) install_my_apps ;;
         6)
-	    	install_homebrew
-	    	install_zsh
-	    	install_nvim
-	    	install_yabai
-	    	install_my_apps
+	    install_homebrew
+	    install_zsh
+	    install_nvim
+	    install_yabai
+	    install_my_apps
             ;;
         *) printf "%b\n" "${RED}Invalid choice.${RC}" && exit 1 ;;
     esac
