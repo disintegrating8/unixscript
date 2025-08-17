@@ -72,37 +72,43 @@ stow_dotfiles() {
 
     # Ensure stow is installed
     command -v stow &>/dev/null || {
-      printf "%b\n" "${YELLOW}Stow not found, installing...${RC}"
-      brew install stow || { printf "%b\n" "${RED}Failed to install Stow${RC}"; exit 1; }
+    	printf "%b\n" "${YELLOW}Stow not found, installing...${RC}"
+     	brew install stow || { printf "%b\n" "${RED}Failed to install Stow${RC}"; exit 1; }
     }
 
     # Clone or update dotfiles
-    cd "$HOME" || exit 1
-    if [ -d dotfiles ]; then
-      cd dotfiles && git stash && git pull
+    if [ -d "$HOME/dotfiles" ]; then
+		cd "$HOME/dotfiles" && git stash && git pull
     else
-      git clone --depth=1 https://github.com/disintegrating8/dotfiles || {
-	printf "%b\n" "${RED}Failed to clone dotfiles${RC}"; exit 1;
-      }
-      cd dotfiles || exit 1
+	    cd "$HOME"
+	    if git clone --depth=1 https://github.com/disintegrating8/dotfiles "$HOME/dotfiles"; then
+	        cd "$HOME/dotfiles"
+	    else
+	        printf "%b\n" "${RED}Failed to clone dotfiles${RC}"
+	        exit 1
+	    fi
     fi
 
     # Process and stow each directory
     for DIR in "${DIRS[@]}"; do
-      printf "%b\n" "${YELLOW}Processing $DIR...${RC}"
-      find "$STOW_DIR/$DIR" -type f | while read -r FILE; do
-	REL_PATH="${FILE#$STOW_DIR/$DIR/}"
-	DEST="$HOME/$REL_PATH"
-	if [ -e "$DEST" ] && [ ! -L "$DEST" ]; then
-	  BACKUP="$DEST.backup-$(date +"%m%d_%H%M")"
-	  printf "%b\n" "${YELLOW}Backing up $DEST → $BACKUP${RC}"
-	  mkdir -p "$(dirname "$BACKUP")"
-	  mv "$DEST" "$BACKUP"
-	fi
-      done
-      printf "%b\n" "${YELLOW}Stowing $DIR...${RC}"
-      stow "$DIR" && printf "%b\n" "${GREEN}$DIR stowed!${RC}" || { printf "%b\n" "${RED}Failed to stow $DIR.${RC}"; exit 1; }
-    done
+		printf "%b\n" "${YELLOW}Processing $DIR...${RC}"
+    	# Check all files in the stow directory
+  		find "$STOW_DIR/$DIR" -type f | while read -r FILE; do
+			REL_PATH="${FILE#$STOW_DIR/$DIR/}"
+			DEST="$HOME/$REL_PATH"
+   
+   			# Backup existing files that aren't symlinks
+			if [ -e "$DEST" ] && [ ! -L "$DEST" ]; then
+		 		BACKUP="$DEST.backup-$(date +"%m%d_%H%M")"
+		   		printf "%b\n" "${YELLOW}Backing up $DEST → $BACKUP${RC}"
+			 	mkdir -p "$(dirname "$BACKUP")"
+		   		mv "$DEST" "$BACKUP"
+			fi
+    	done
+		# Stow the directory
+	    printf "%b\n" "${YELLOW}Stowing $DIR...${RC}"
+	    stow "$DIR" && printf "%b\n" "${GREEN}$DIR stowed!${RC}" || { printf "%b\n" "${RED}Failed to stow $DIR.${RC}"; exit 1; }
+	done
 }
 
 main() {
@@ -116,17 +122,17 @@ main() {
     printf "%b" "Enter your choice [1-6]: "
     read -r CHOICE
     case "$CHOICE" in
-	1) install_homebrew ;;
+		1) install_homebrew ;;
         2) install_zsh ;;
         3) install_nvim ;;
         4) install_yabai ;;
-	5) install_my_apps ;;
+		5) install_my_apps ;;
         6)
-	    install_homebrew
-	    install_zsh
-	    install_nvim
-	    install_yabai
-	    install_my_apps
+	    	install_homebrew
+	    	install_zsh
+	    	install_nvim
+	    	install_yabai
+	    	install_my_apps
             ;;
         *) printf "%b\n" "${RED}Invalid choice.${RC}" && exit 1 ;;
     esac
