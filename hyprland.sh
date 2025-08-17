@@ -97,11 +97,11 @@ main() {
         3) install_zsh ;;
         4) install_my_packages ;;
         5)
-	    checkFlatpak
-            install_fcitx
-            install_zsh
-            install_my_packages
-            ;;
+	  checkFlatpak
+	  install_fcitx
+	  install_zsh
+	  install_my_packages
+          ;;
         *) printf "%b\n" "${RED}Invalid choice.${RC}" && exit 1 ;;
     esac
 }

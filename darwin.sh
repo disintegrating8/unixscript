@@ -123,10 +123,10 @@ main() {
 	5) install_my_apps ;;
         6)
 	    install_homebrew
-            install_zsh
+	    install_zsh
 	    install_nvim
 	    install_yabai
-            install_my_apps
+	    install_my_apps
             ;;
         *) printf "%b\n" "${RED}Invalid choice.${RC}" && exit 1 ;;
     esac
