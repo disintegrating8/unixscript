@@ -99,7 +99,7 @@ stow_dotfiles(){
 	printf "%b\n" "${YELLOW}Processing $DIR...${RC}"
 	# Find all files in the stow directory
 	find "$STOW_DIR/$DIR" -type f -print0 |
-	while IFS = read -r -d '' FILE; do
+	while IFS= read -r -d '' FILE; do
 	    REL_PATH="${FILE#$STOW_DIR/$DIR/}"
 	    DEST="$HOME/$REL_PATH"
 
