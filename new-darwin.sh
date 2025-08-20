@@ -98,6 +98,7 @@ stow_dotfiles(){
     for DIR in "${DIRS[@]}"; do
 	printf "%b\n" "${YELLOW}Processing $DIR...${RC}"
 	# Find all files in the stow directory
+	find "$STOW_DIR/$DIR" -type f -print0 |
 	while IFS = read -r -d '' FILE; do
 	    REL_PATH="${FILE#$STOW_DIR/$DIR/}"
 	    DEST="$HOME/$REL_PATH"
@@ -111,7 +112,7 @@ stow_dotfiles(){
 		# Move the original file
 		mv "$DEST" "$BACKUP_PATH"
 	    fi
-	done < <(find "$STOW_DIR/$DIR" -type f -print0)
+	done
 
 	# Finally, stow the directory
 	printf "%b\n" "${YELLOW}Stowing $DIR...${RC}"
