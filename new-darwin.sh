@@ -52,7 +52,7 @@ install_nvim(){
 # Tiling window manager (more of a resizer) setup for darwin
 install_yabai(){
     DIRS+=("yabai" "skhd" "sketchybar" "borders")
-    $tchoice = 1
+    tchoice = 1
     brew tap FelixKratz/formulae
     brew tap koekeishiya/formulae
     brew install mas ifstat lua jq switchaudio-osx nowplaying-cli 
