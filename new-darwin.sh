@@ -145,7 +145,6 @@ main() {
 	    install_zsh
 	    install_nvim
 	    install_yabai
-	    install_my_apps
 	    ;;
 	*) printf "%b\n" "${RED}Invalid choice.${RC}" && exit 1 ;;
     esac
