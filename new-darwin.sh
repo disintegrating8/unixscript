@@ -1,4 +1,4 @@
-#!/bin/sh -e
+#!/usr/bin/env bash
 
 RC='\033[0m'
 RED='\033[31m'
@@ -58,9 +58,7 @@ install_yabai(){
     brew install mas ifstat lua jq switchaudio-osx nowplaying-cli 
     brew install yabai skhd sketchybar borders
     brew install --cask sf-symbols font-sf-mono font-sf-pro font-hack-nerd-font font-jetbrains-mono font-fira-code font-meslo-lg-nerd-font
-    # Sketchybar Plugins
-    curl -L https://github.com/kvndrsslr/sketchybar-app-font/releases/download/v2.0.28/sketchybar-app-font.ttf -o $HOME/Library/Fonts/sketchybar-app-font.ttf
-    (git clone https://github.com/FelixKratz/SbarLua.git /tmp/SbarLua && cd /tmp/SbarLua/ && make install && rm -rf /tmp/SbarLua/)
+    brew install --cask font-sketchybar-app-font
 }
 
 install_my_apps(){
