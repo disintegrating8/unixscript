@@ -55,7 +55,7 @@ install_yabai(){
     tchoice=1
     brew tap FelixKratz/formulae
     brew tap koekeishiya/formulae
-    brew install mas ifstat lua jq switchaudio-osx nowplaying-cli 
+    brew install ifstat lua jq switchaudio-osx nowplaying-cli 
     brew install yabai skhd sketchybar borders
     brew install --cask sf-symbols font-sf-mono font-sf-pro font-hack-nerd-font font-jetbrains-mono font-fira-code font-meslo-lg-nerd-font
     brew install --cask font-sketchybar-app-font
@@ -65,7 +65,9 @@ install_yabai(){
 
 install_my_apps(){
     brew install btop
-    brew install --cask brave-browser karabiner-elements linearmouse pearcleaner libreoffice iina gimp jellyfin-media-player nextcloud-vfs signal discord
+    brew install --cask orion karabiner-elements linearmouse pearcleaner libreoffice iina gimp jellyfin-media-player nextcloud-vfs signal discord github
+    brew install mas
+    mas install 1451685025 #Wireguard
 }
 
 stow_dotfiles(){
@@ -262,7 +264,7 @@ main() {
     printf "%b\n" "2. ${YELLOW}zsh${RC}"
     printf "%b\n" "3. ${YELLOW}neovim${RC}"
     printf "%b\n" "4. ${YELLOW}yabai, skhd, sketchybar, jankyborders${RC}"
-    printf "%b\n" "5. ${YELLOW}my_apps & settings${RC}"
+    printf "%b\n" "5. ${YELLOW}my apps & settings${RC}"
     printf "%b\n" "6. ${YELLOW}All${RC}"
     printf "%b" "Enter your choice [1-6]: "
     read -r CHOICE
@@ -271,7 +273,12 @@ main() {
 	2) install_zsh ;;
 	3) install_nvim ;;
 	4) install_yabai ;;
-	5) install_my_apps ;;
+	5) 
+	    removeAnimations
+	    fixfinder
+	    my_defaults
+	    install_my_apps
+	    ;;
 	6)
 	    install_homebrew
 	    install_zsh
@@ -289,4 +296,3 @@ if [[ $tchoice = 1 ]]; then
     brew services start felixkratz/formulae/sketchybar
     brew services start felixkratz/formulae/borders
 fi
-	find "$STOW_DIR/$DIR" -type f -print0 |
