@@ -61,6 +61,7 @@ install_yabai(){
     brew install --cask font-sketchybar-app-font
     # SbarLua
     (git clone https://github.com/FelixKratz/SbarLua.git /tmp/SbarLua && cd /tmp/SbarLua/ && make install && rm -rf /tmp/SbarLua/)
+    echo "$(whoami) ALL=(root) NOPASSWD: sha256:$(shasum -a 256 $(which yabai) | cut -d " " -f 1) $(which yabai) --load-sa" | sudo tee /private/etc/sudoers.d/yabai
 }
 
 install_my_apps(){
@@ -274,9 +275,18 @@ main() {
     read -r CHOICE
     case "$CHOICE" in
 	1) install_homebrew ;;
-	2) install_zsh ;;
-	3) install_nvim ;;
-	4) install_yabai ;;
+	2) 
+	    install_zsh
+	    stow_dotfiles
+	    ;;
+	3) 
+	    install_nvim
+	    stow_dotfiles
+	    ;;
+	4) 
+	    install_yabai
+	    stow_dotfiles
+	    ;;
 	5) 
 	    removeAnimations
 	    fixfinder
@@ -288,12 +298,12 @@ main() {
 	    install_zsh
 	    install_nvim
 	    install_yabai
+	    stow_dotfiles
 	    ;;
 	*) printf "%b\n" "${RED}Invalid choice.${RC}" && exit 1 ;;
     esac
 }
 main
-stow_dotfiles
 if [[ $tchoice = 1 ]]; then
     yabai --start-service
     skhd --start-service
