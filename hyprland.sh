@@ -127,4 +127,5 @@ main() {
 	*) printf "%b\n" "${RED}Invalid choice.${RC}" && exit 1 ;;
     esac
 }
+
 main
