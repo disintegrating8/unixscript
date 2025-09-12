@@ -68,7 +68,7 @@ install_yabai(){
 
 install_my_apps(){
     brew install btop
-    brew install --cask orion karabiner-elements linearmouse pearcleaner libreoffice iina gimp jellyfin-media-player nextcloud-vfs signal discord github
+    brew install --cask brave-browser karabiner-elements linearmouse pearcleaner libreoffice iina gimp jellyfin-media-player nextcloud-vfs signal discord github
     brew install mas
     mas install 1451685025 #Wireguard
     # School Shit
@@ -203,7 +203,7 @@ fixfinder () {
     # Configure list view settings for all folders
     printf "%b\n" "${CYAN}Configuring list view settings for all folders...${RC}"
     # Set default list view settings for new folders
-    defaults write com.apple.finder FK_StandardViewSettings -dict-add ListViewSettings '{ "columns" = ( { "ascending" = 1; "identifier" = "name"; "visible" = 1; "width" = 300; }, { "ascending" = 0; "identifier" = "dateModified"; "visible" = 1; "width" = 181; }, { "ascending" = 0; "identifier" = "size"; "visible" = 1; "width" = 97; } ); "iconSize" = 16; "showIconPreview" = 0; "sortColumn" = "name"; "textSize" = 12; "useRelativeDates" = 1; }'
+    defaults write com.apple.finder FK_StandardViewSettings -dict-add ListViewSettings '{ "columns" = ( { "ascending" = 1; "identifier" = "name"; "visible" = 1; "width" = 300; }, { "ascending" = 0; "identifier" = "dateModified"; "visible" = 1; "width" = 181; }, { "ascending" = 0; "identifier" = "size"; "visible" = 1; "width" = 97; } ); "iconSize" = 16; "showIconPreview" = 0; "sortColumn" = "name"; "textSize" = 13; "useRelativeDates" = 1; }'
     
     # Clear existing folder view settings to force use of default settings
     printf "%b\n" "${CYAN}Clearing existing folder view settings...${RC}"
@@ -212,7 +212,7 @@ fixfinder () {
     
     # Set list view for all view types
     printf "%b\n" "${CYAN}Setting list view for all folder types...${RC}"
-    defaults write com.apple.finder FK_StandardViewSettings -dict-add ExtendedListViewSettings '{ "columns" = ( { "ascending" = 1; "identifier" = "name"; "visible" = 1; "width" = 300; }, { "ascending" = 0; "identifier" = "dateModified"; "visible" = 1; "width" = 181; }, { "ascending" = 0; "identifier" = "size"; "visible" = 1; "width" = 97; } ); "iconSize" = 16; "showIconPreview" = 0; "sortColumn" = "name"; "textSize" = 12; "useRelativeDates" = 1; }'
+    defaults write com.apple.finder FK_StandardViewSettings -dict-add ExtendedListViewSettings '{ "columns" = ( { "ascending" = 1; "identifier" = "name"; "visible" = 1; "width" = 300; }, { "ascending" = 0; "identifier" = "dateModified"; "visible" = 1; "width" = 181; }, { "ascending" = 0; "identifier" = "size"; "visible" = 1; "width" = 97; } ); "iconSize" = 16; "showIconPreview" = 0; "sortColumn" = "name"; "textSize" = 13; "useRelativeDates" = 1; }'
     
     # Sets default search scope to the current folder
     printf "%b\n" "${CYAN}Setting default search scope to the current folder...${RC}"
@@ -257,6 +257,7 @@ my_defaults(){
     defaults write com.apple.dock "orientation" -string "left"
     defaults write com.apple.dock "autohide" -bool "true" # Autohide dock
     defaults write com.apple.dock "show-recents" -bool "false"
+    defaults write com.apple.Accessibility "ReduceMotionEnabled" -bool "true"
     # Change screenshot location
     defaults write com.apple.screencapture "location" -string "~/Pictures" && killall SystemUIServer
     # Fix Missions control to NEVER rearrange spaces
