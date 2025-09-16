@@ -9,7 +9,7 @@ install_fcitx(){
 
 install_zsh(){
     printf "%b\n" "${YELLOW}Installing zsh packages${RC}"
-    yay -S --needed --noconfirm lsd zsh zsh-autosuggestions zsh-syntax-highlighting fzf starship fastfetch trash-cli
+    yay -S --needed --noconfirm zsh zsh-autosuggestions zsh-syntax-highlighting fzf starship fastfetch trash-cli
 
     # Check if the zsh-completions directory exists
     if [ -d "zsh-completions" ]; then
@@ -37,7 +37,7 @@ install_zsh(){
 
 install_my_packages(){
     printf "%b\n" "${YELLOW}Installing personal packages...${RC}"
-    yay -S --needed --noconfirm timeshift neovim github-desktop-bin brave-bin libreoffice-fresh signal-desktop mpv obs-studio gimp prismlauncher gamemode
+    yay -S --needed --noconfirm neovim github-desktop-bin librewolf-bin libreoffice-fresh signal-desktop mpv obs-studio gimp prismlauncher gamemode
     yay -S steam
     flatpak install -y com.discordapp.Discord com.github.iwalton3.jellyfin-media-player com.vysp3r.ProtonPlus
     DIRS+=("nvim")
@@ -105,7 +105,7 @@ main() {
     printf "%b\n" "2. ${YELLOW}fcitx5 (hangul)${RC}"
     printf "%b\n" "3. ${YELLOW}zsh${RC}"
     printf "%b\n" "4. ${YELLOW}my packages${RC}"
-    printf "%b\n" "5. ${YELLOW}All (execpt my packages)${RC}"
+    printf "%b\n" "5. ${YELLOW}All ${RC}"
     printf "%b" "Enter your choice [1-5]: "
     read -r CHOICE
     case "$CHOICE" in
@@ -118,11 +118,16 @@ main() {
 	    install_zsh
 	    stow_dotfiles
 	    ;;
-	4) install_my_packages ;;
+	4) 
+	    install_my_packages
+	    stow_dotfiles
+	    ;;
 	5)
 	    checkFlatpak
 	    install_fcitx
 	    install_zsh
+	    install_my_packages
+	    stow_dotfiles
 	    ;;
 	*) printf "%b\n" "${RED}Invalid choice.${RC}" && exit 1 ;;
     esac
