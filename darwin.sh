@@ -68,7 +68,8 @@ install_yabai(){
 
 install_my_apps(){
     brew install btop
-    brew install --cask brave-browser karabiner-elements linearmouse pearcleaner libreoffice iina gimp jellyfin-media-player nextcloud-vfs signal discord github
+    brew install --cask karabiner-elements linearmouse pearcleaner libreoffice iina gimp jellyfin-media-player nextcloud-vfs signal discord github
+    brew install librewolf --no-quarantine
     brew install mas
     mas install 1451685025 #Wireguard
     # School Shit
