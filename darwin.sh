@@ -231,8 +231,8 @@ fixfinder () {
     defaults write NSGlobalDomain AppleShowAllExtensions -bool true
 
     # Set the sidebar icon size to small
-    printf "%b\n" "${CYAN}Setting sidebar icon size to small...${RC}"
-    defaults write NSGlobalDomain NSTableViewDefaultSizeMode -int 1
+    #printf "%b\n" "${CYAN}Setting sidebar icon size to small...${RC}"
+    #defaults write NSGlobalDomain NSTableViewDefaultSizeMode -int 1
 
     # Show status bar in Finder
     printf "%b\n" "${CYAN}Showing status bar in Finder...${RC}"
@@ -293,10 +293,10 @@ main() {
 	    stow_dotfiles
 	    ;;
 	5) 
-	    #removeAnimations
-	    #fixfinder
-	    #my_defaults
-	    install_my_apps
+	    removeAnimations
+	    fixfinder
+	    my_defaults
+	    #install_my_apps
 	    ;;
 	6)
 	    install_homebrew
