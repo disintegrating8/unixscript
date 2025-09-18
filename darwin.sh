@@ -138,6 +138,7 @@ removeAnimations() {
     
     # Reduce motion in Accessibility settings (most effective)
     printf "%b\n" "${CYAN}Setting reduce motion preference...${RC}"
+    defaults write com.apple.Accessibility ReduceMotionEnabled -bool true
     defaults write com.apple.universalaccess reduceMotion -bool true
     
     # Disable window animations
