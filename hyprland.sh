@@ -32,12 +32,12 @@ install_zsh(){
 	    printf "%b\n" "${GREEN}Your shell is already set to zsh${RC}"
 	fi
     fi
-    DIRS+=("zsh")
+    DIRS+=("zsh" "starship")
 }
 
 install_my_packages(){
     printf "%b\n" "${YELLOW}Installing personal packages...${RC}"
-    yay -S --needed --noconfirm neovim github-desktop-bin librewolf-bin libreoffice-fresh signal-desktop mpv obs-studio gimp prismlauncher gamemode
+    yay -S --needed --noconfirm neovim github-desktop-bin brave-bin libreoffice-fresh signal-desktop mpv obs-studio gimp prismlauncher gamemode
     yay -S steam
     flatpak install -y com.discordapp.Discord com.github.iwalton3.jellyfin-media-player com.vysp3r.ProtonPlus
     DIRS+=("nvim")

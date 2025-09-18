@@ -41,7 +41,7 @@ install_homebrew(){
 install_zsh(){
     DIRS+=("zsh.mac" "kitty" "starship" "fastfetch")
     brew install --cask kitty
-    brew install fastfetch starship zsh-autosuggestions zsh-syntax-highlighting trash-cli
+    brew install fastfetch starship zsh-autosuggestions zsh-syntax-highlighting fzf trash-cli
 }
 
 install_nvim(){
