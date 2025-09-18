@@ -68,7 +68,7 @@ install_yabai(){
 
 install_my_apps(){
     brew install btop
-    brew install --cask firefox karabiner-elements linearmouse pearcleaner libreoffice iina gimp jellyfin-media-player nextcloud-vfs signal discord github
+    brew install --cask brave-browser karabiner-elements linearmouse pearcleaner libreoffice iina gimp jellyfin-media-player nextcloud-vfs signal discord github
     brew install mas
     mas install 1451685025 #Wireguard
     # School Shit
@@ -138,7 +138,6 @@ removeAnimations() {
     
     # Reduce motion in Accessibility settings (most effective)
     printf "%b\n" "${CYAN}Setting reduce motion preference...${RC}"
-    defaults write com.apple.Accessibility ReduceMotionEnabled -bool true
     defaults write com.apple.universalaccess reduceMotion -bool true
     
     # Disable window animations
@@ -297,7 +296,7 @@ main() {
 	    removeAnimations
 	    fixfinder
 	    my_defaults
-	    #install_my_apps
+	    install_my_apps
 	    ;;
 	6)
 	    install_homebrew
@@ -312,9 +311,9 @@ main() {
 	    install_nvim
 	    install_yabai
 	    stow_dotfiles
-	    #removeAnimations
-	    #fixfinder
-	    #my_defaults
+	    removeAnimations
+	    fixfinder
+	    my_defaults
 	    install_my_apps
 	    ;;
 	*) printf "%b\n" "${RED}Invalid choice.${RC}" && exit 1 ;;
