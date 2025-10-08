@@ -37,9 +37,9 @@ install_zsh(){
 
 install_my_packages(){
     printf "%b\n" "${YELLOW}Installing personal packages...${RC}"
-    yay -S --needed --noconfirm neovim brave-bin libreoffice-fresh signal-desktop mpv obs-studio gimp
+    yay -S --needed --noconfirm neovim floorp-bin libreoffice-fresh signal-desktop mpv obs-studio gimp
     #yay -S steam prismlauncher gamemode
-    flatpak install -y com.discordapp.Discord com.github.iwalton3.jellyfin-media-player com.vysp3r.ProtonPlus
+    #flatpak install -y com.discordapp.Discord com.github.iwalton3.jellyfin-media-player com.vysp3r.ProtonPlus
     DIRS+=("nvim")
 }
 
@@ -126,7 +126,7 @@ main() {
 	    checkFlatpak
 	    install_fcitx
 	    install_zsh
-	    #install_my_packages
+	    install_my_packages
 	    stow_dotfiles
 	    ;;
 	*) printf "%b\n" "${RED}Invalid choice.${RC}" && exit 1 ;;
