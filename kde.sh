@@ -68,6 +68,10 @@ install_zsh(){
 install_my_packages(){
     printf "%b\n" "${YELLOW}Installing personal packages...${RC}"
     yay -S --needed --noconfirm neovim floorp-bin libreoffice-fresh libreoffice-extension-h2orestart signal-desktop mpv obs-studio gimp
+    # thinkpad stuff
+    sudo pacman -S --noconfirm fprintd
+    # kde stuff
+    sudo pacman -S power-profiles-daemon system-config-printer print-manager cups
 }
 
 install_fcitx(){

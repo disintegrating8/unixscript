@@ -37,7 +37,7 @@ install_zsh(){
 
 install_my_packages(){
     printf "%b\n" "${YELLOW}Installing personal packages...${RC}"
-    yay -S --needed --noconfirm neovim floorp-bin libreoffice-fresh libreoffice-extension-h2orestart signal-desktop mpv obs-studio gimp
+    yay -S --needed --noconfirm man-pages man-db neovim floorp-bin libreoffice-fresh libreoffice-extension-h2orestart signal-desktop mpv obs-studio gimp
     #yay -S steam prismlauncher gamemode
     #flatpak install -y com.discordapp.Discord com.github.iwalton3.jellyfin-media-player com.vysp3r.ProtonPlus
     DIRS+=("nvim")
