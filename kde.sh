@@ -74,8 +74,8 @@ install_fcitx(){
     sudo pacman -S --noconfirm fcitx5-im fcitx5-hangul noto-fonts-cjk
 }
 
+checkEnv
 pacman_config
-checkFlatpak
 install_fcitx
 install_zsh
 install_my_packages
