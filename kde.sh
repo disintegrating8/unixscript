@@ -81,5 +81,5 @@ install_fcitx(){
 checkEnv
 pacman_config
 install_fcitx
-install_zsh
+#install_zsh
 install_my_packages
