@@ -71,7 +71,7 @@ install_my_packages(){
     # thinkpad stuff
     sudo pacman -S --noconfirm fprintd
     # kde stuff
-    sudo pacman -S power-profiles-daemon system-config-printer print-manager cups
+    sudo pacman -S power-profiles-daemon powerdevil system-config-printer print-manager cups
 }
 
 install_fcitx(){
