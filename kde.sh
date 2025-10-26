@@ -69,7 +69,7 @@ install_my_packages(){
     printf "%b\n" "${YELLOW}Installing personal packages...${RC}"
     yay -S --needed --noconfirm neovim floorp-bin libreoffice-fresh libreoffice-extension-h2orestart signal-desktop mpv obs-studio gimp
     # thinkpad stuff
-    sudo pacman -S --noconfirm fprintd
+    sudo pacman -S --noconfirm fprintd alsa-utils
     # kde stuff
     sudo pacman -S power-profiles-daemon powerdevil system-config-printer print-manager cups
 }
