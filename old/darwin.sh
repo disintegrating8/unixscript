@@ -68,7 +68,7 @@ install_yabai(){
 
 install_my_apps(){
     brew install btop
-    brew install --cask floorp karabiner-elements linearmouse pearcleaner libreoffice iina gimp jellyfin-media-player nextcloud-vfs signal github
+    brew install --cask brave-browser karabiner-elements linearmouse pearcleaner libreoffice iina gimp jellyfin-media-player nextcloud-vfs signal discord github
     brew install mas
     mas install 1451685025 #Wireguard
     # School Shit
@@ -77,7 +77,19 @@ install_my_apps(){
     mas install 6450684725 #NWEA
 }
 
-copy_dotfiles(){
+stow_dotfiles(){
+    STOW_DIR="$HOME/dotfiles"
+    BACKUP_DIR="$HOME/unixscript/backups"
+
+    # Ensure stow is installed
+    if ! command -v stow &>/dev/null; then
+	printf "%b\n" "${YELLOW}Stow not found, installing...${RC}"
+	if ! brew install stow; then
+	    printf "%b\n" "${RED}Failed to install Stow${RC}"
+	    exit 1
+	fi
+    fi
+    
     # Clone or update dotfiles
     if [ -d "$HOME/dotfiles" ]; then
 	cd "$HOME/dotfiles" && git stash && git pull
@@ -91,12 +103,34 @@ copy_dotfiles(){
 	fi
     fi
 
-    ln -sf ~/dotfiles/.config/kitty/ ~/.config/
-    ln -sf ~/dotfiles/.config/borders/ ~/.config/
-    ln -sf ~/dotfiles/.config/skhd/ ~/.config/
-    ln -sf ~/dotfiles/.zshrc ~/
-    ln -sf ~/dotfiles/.zprofile ~/
-    ln -sf ~/dotfiles/.alias ~/
+    # Process and stow each directory to avoid errors caused by already existing files
+    for DIR in "${DIRS[@]}"; do
+	printf "%b\n" "${YELLOW}Processing $DIR...${RC}"
+	# Find all files in the stow directory
+	find "$STOW_DIR/$DIR" -type f | while read -r FILE;do
+	    REL_PATH="${FILE#$STOW_DIR/$DIR/}"
+	    DEST="$HOME/$REL_PATH"
+
+	    # If a file already exists at destination, back it up
+	    if [ -e "$DEST" ] && [ ! -L "$DEST" ]; then
+		BACKUP_PATH="$BACKUP_DIR/$REL_PATH.backup-$(date +"%m%d_%H%M")"
+		printf "%b\n" "${YELLOW}Backing up existing $DEST -> $BACKUP_PATH${RC}"
+		# Ensure backup directory exists
+		mkdir -p "$(dirname "$BACKUP_PATH")"
+		# Move the original file
+		mv "$DEST" "$BACKUP_PATH"
+	    fi
+	done
+
+	# Finally, stow the directory
+	printf "%b\n" "${YELLOW}Stowing $DIR...${RC}"
+	if stow -d "$STOW_DIR" "$DIR"; then
+	    printf "%b\n" "${GREEN}$DIR stowed!${RC}"
+	else
+	    printf "%b\n" "${RED}Failed to stow $DIR.${RC}"
+	    exit 1
+	fi
+    done
 }
 
 removeAnimations() {
