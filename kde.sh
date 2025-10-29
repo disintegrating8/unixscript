@@ -65,9 +65,31 @@ install_zsh(){
     fi
 }
 
+copy_dotfiles() {
+    # Clone or update dotfiles
+    if [ -d "$HOME/dotfiles" ]; then
+	cd "$HOME/dotfiles" && git stash && git pull
+    else
+	cd "$HOME"
+	if git clone https://github.com/disintegrating8/dotfiles "$HOME/dotfiles"; then
+	    printf "%b\n" "${GREEN}Successfully cloned dotfiles${RC}"
+	    ln -sf ~/dotfiles/.config/kitty/ ~/.config/
+	    ln -sf ~/dotfiles/.config/nvim/ ~/.config/
+	    ln -sf ~/dotfiles/.config/fastfetch/ ~/.config/
+	    ln -sf ~/dotfiles/.config/starship.toml ~/.config/
+	    ln -sf ~/dotfiles/.zshrc ~/
+	    ln -sf ~/dotfiles/.zprofile ~/
+	    ln -sf ~/dotfiles/.alias ~/
+	else
+	    printf "%b\n" "${RED}Failed to clone dotfiles${RC}"
+	    exit 1
+	fi
+    fi
+}
+
 install_my_packages(){
     printf "%b\n" "${YELLOW}Installing personal packages...${RC}"
-    yay -S --needed --noconfirm neovim floorp-bin libreoffice-fresh libreoffice-extension-h2orestart signal-desktop mpv obs-studio gimp
+    yay -S --needed --noconfirm neovim librewolf-bin libreoffice-fresh libreoffice-extension-h2orestart signal-desktop mpv obs-studio gimp
     # thinkpad stuff
     sudo pacman -S --noconfirm fprintd alsa-utils
     # kde stuff
@@ -81,5 +103,6 @@ install_fcitx(){
 checkEnv
 pacman_config
 install_fcitx
-#install_zsh
+install_zsh
+copy_dotfiles
 install_my_packages
