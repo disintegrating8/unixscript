@@ -40,7 +40,7 @@ pacman_config(){
 
 install_zsh(){
     printf "%b\n" "${YELLOW}Installing zsh packages${RC}"
-    yay -S --needed --noconfirm zsh zsh-autosuggestions zsh-syntax-highlighting fzf starship fastfetch trash-cli
+    yay -S --needed --noconfirm zsh zsh-autosuggestions zsh-syntax-highlighting fzf starship fastfetch trash-cli ttf-meslo-nerd
 
     # Check if the zsh-completions directory exists
     if [ -d "zsh-completions" ]; then
@@ -89,7 +89,7 @@ copy_dotfiles() {
 
 install_my_packages(){
     printf "%b\n" "${YELLOW}Installing personal packages...${RC}"
-    yay -S --needed --noconfirm neovim librewolf-bin libreoffice-fresh libreoffice-extension-h2orestart signal-desktop mpv obs-studio gimp
+    yay -S --needed --noconfirm kitty neovim librewolf-bin libreoffice-fresh libreoffice-extension-h2orestart signal-desktop mpv obs-studio gimp
     # thinkpad stuff
     sudo pacman -S --needed --noconfirm fprintd alsa-utils
     # kde stuff
