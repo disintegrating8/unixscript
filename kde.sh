@@ -89,7 +89,7 @@ copy_dotfiles() {
 
 install_my_packages(){
     printf "%b\n" "${YELLOW}Installing personal packages...${RC}"
-    yay -S --needed --noconfirm kitty neovim librewolf-bin libreoffice-fresh libreoffice-extension-h2orestart signal-desktop mpv obs-studio gimp
+    yay -S --needed --noconfirm kitty neovim wl-clipboard librewolf-bin libreoffice-fresh libreoffice-extension-h2orestart signal-desktop mpv obs-studio gimp
     # thinkpad stuff
     sudo pacman -S --needed --noconfirm fprintd alsa-utils
     # kde stuff
