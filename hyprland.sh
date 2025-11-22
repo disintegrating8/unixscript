@@ -2,6 +2,68 @@
 . ./check.sh
 DIRS=()
 
+install_base(){
+    sudo pacman -S --needed --noconfirm base-devel archlinux-keyring findutils curl wget jq python-requests python-pyquery unzip \
+	xdg-user-dirs xdg-utils pacman-contrib \
+	hyprland hypridle hyprlock hyprpolkitagent wlogout network-manager-applet rofi swaync swww wallust waybar \
+	bc cliphist wl-clipboard grim slurp imagemagick inxi libspng qalculate-gtk \
+	kitty nano vim neovim btop nvtop \
+	nwg-look kvantum qt5ct qt6ct qt6-svg \
+	pamixer pavucontrol playerctl brightnessctl mpv mpv-mpris yt-dlp ffmpeg \
+	adobe-source-code-pro-fonts noto-fonts noto-fonts-emoji otf-font-awesome ttf-droid ttf-fira-code ttf-fantasque-nerd ttf-jetbrains-mono ttf-jetbrains-mono-nerd #ttf-victor-mono
+}
+
+setup_sddm(){
+    sudo pacman -S --needed --noconfirm qt6-declarative qt6-svg qt6-virtualkeyboard qt6-multimedia-ffmpeg sddm
+    sudo systemctl enable sddm
+    wayland_sessions_dir=/usr/share/wayland-sessions
+    [ ! -d "$wayland_sessions_dir" ] && { printf "$CAT - $wayland_sessions_dir not found, creating...\n"; sudo mkdir "$wayland_sessions_dir"; }
+}
+
+install_pipewire(){
+    printf "%b\n" "${YELLOW}Installing Pipewire Packages...${RC}"
+    sudo pacman -S --needed --noconfirm pipewire wireplumber pipewire-audio pipewire-alsa pipewire-pulse sof-firmware
+    printf "%b\n" "${YELLOW}Activating Pipewire Services...${RC}"
+    systemctl --user enable --now pipewire.service pipewire.socket pipewire-pulse.socket wireplumber.service
+}
+
+pacman_config(){
+    printf "%b\n" "${YELLOW}Adding Extra Spice in pacman.conf...${RC}"
+    pacman_conf="/etc/pacman.conf"
+
+    # Remove comments '#' from specific lines
+    lines_to_edit=(
+        "Color"
+        "CheckSpace"
+        "VerbosePkgLists"
+        "ParallelDownloads"
+    )
+
+    # Uncomment specified lines if they are commented out
+    for line in "${lines_to_edit[@]}"; do
+        if grep -q "^#$line" "$pacman_conf"; then
+            sudo sed -i "s/^#$line/$line/" "$pacman_conf"
+            printf "%b\n" "${GREEN}Uncommented: $line${RC}"
+        else
+            printf "%b\n" "${GREEN}$line is already uncommented${RC}"
+        fi
+    done
+
+    # Add "ILoveCandy" below ParallelDownloads if it doesn't exist
+    if grep -q "^ParallelDownloads" "$pacman_conf" && ! grep -q "^ILoveCandy" "$pacman_conf"; then
+        sudo sed -i "/^ParallelDownloads/a ILoveCandy" "$pacman_conf"
+        printf "%b\n" "${GREEN}Added ${CYAN}ILoveCandy${RC} after ${CYAN}ParallelDownloads${RC}"
+    else
+        printf "%b\n" "${YELLOW}It seems ${CYAN}ILoveCandy${RC} already exists moving on...${RC}"
+    fi
+
+    printf "%b\n" "${GREEN}Pacman.conf spicing up completed${RC}"
+
+    # updating pacman.conf
+    printf "%b\n" "${CYAN}Synchronizing Pacman Repo${RC}"
+    sudo pacman -Sy
+}
+
 install_fcitx(){
     sudo pacman -S --noconfirm fcitx5-im fcitx5-hangul noto-fonts-cjk
     DIRS+=("fcitx")
@@ -9,7 +71,7 @@ install_fcitx(){
 
 install_zsh(){
     printf "%b\n" "${YELLOW}Installing zsh packages${RC}"
-    yay -S --needed --noconfirm zsh zsh-autosuggestions zsh-syntax-highlighting fzf starship fastfetch trash-cli
+    sudo pacman -S --needed --noconfirm zsh zsh-autosuggestions zsh-syntax-highlighting fzf fastfetch trash-cli
 
     # Check if the zsh-completions directory exists
     if [ -d "zsh-completions" ]; then
@@ -99,38 +161,9 @@ stow_dotfiles() {
     done
 }
 
-main() {
-    printf "%b\n" "${YELLOW}Choose what to install:${RC}"
-    printf "%b\n" "1. ${YELLOW}flatpak (hangul)${RC}"
-    printf "%b\n" "2. ${YELLOW}fcitx5 (hangul)${RC}"
-    printf "%b\n" "3. ${YELLOW}zsh${RC}"
-    printf "%b\n" "4. ${YELLOW}my packages${RC}"
-    printf "%b\n" "5. ${YELLOW}All ${RC}"
-    printf "%b" "Enter your choice [1-5]: "
-    read -r CHOICE
-    case "$CHOICE" in
-	1) checkFlatpak ;;
-	2) 
-	    install_fcitx
-	    stow_dotfiles
-	    ;;
-	3)
-	    install_zsh
-	    stow_dotfiles
-	    ;;
-	4) 
-	    install_my_packages
-	    stow_dotfiles
-	    ;;
-	5)
-	    checkFlatpak
-	    install_fcitx
-	    install_zsh
-	    install_my_packages
-	    stow_dotfiles
-	    ;;
-	*) printf "%b\n" "${RED}Invalid choice.${RC}" && exit 1 ;;
-    esac
-}
-
-main
+checkEnv
+install_base
+install_fcitx
+install_zsh
+install_my_packages
+stow_dotfiles
